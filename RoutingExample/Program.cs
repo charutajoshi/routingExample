@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http; 
+﻿using System.Net;
+using Microsoft.AspNetCore.Http; 
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -32,14 +33,19 @@ app.Use(async (context, next) =>
 // Create endpoints
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("test1", async (context) =>
+    endpoints.Map("files/{filename}.{extension}", async context =>
     {
-        await context.Response.WriteAsync("hello1"); 
+        // string? = nullable reference type
+        // allows null values
+        string? fileName = Convert.ToString(context.Request.RouteValues["filename"]);
+        string? extension = Convert.ToString(context.Request.RouteValues["extension"]);
+        await context.Response.WriteAsync($"File name is {fileName}, extension is {extension}");
     });
 
-    endpoints.MapPost("test2", async (context) =>
+    endpoints.Map("employee/profile/{EmployeeName}", async context =>
     {
-        await context.Response.WriteAsync("hello2");
+        string? employeeName = Convert.ToString(context.Request.RouteValues["EmployeeName"]);
+        await context.Response.WriteAsync($"Employee name is {employeeName}");
     });
 });
 
